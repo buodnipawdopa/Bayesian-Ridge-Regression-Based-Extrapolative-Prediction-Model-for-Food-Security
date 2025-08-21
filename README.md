@@ -21,7 +21,8 @@
 │  │  ├─ DALYs_(Disability-Adjusted_Life_Years).csv
 │  │  ├─ Deaths.csv
 │  │  └─ Incidence.csv
-│  └─ ISO/region_abbreviations.xlsx     # flexible column names (Region/ISO, etc.)
+│  ├─ food_safety/<Region>/<Region>_filtered.csv
+│  └─ ISO/region_abbreviations.xlsx     
 ├─ results/
 │  ├─ food2health_v2/<Region>/
 │  │  ├─ A_to_B_coeffs.csv
@@ -59,9 +60,6 @@
 ├─ make_visuals_oneclick.py
 └─ make_maps_all_in_one.py
 ```
-
-> The two visualization drivers implement, respectively, the 4‑in‑1 figure bundle (including annotated posterior plots and a lower‑triangle, annotated similarity heatmap) and the three map products (hub/links/top‑driver). &#x20;
-
 ---
 
 ## 2) Data prerequisites
@@ -171,16 +169,7 @@ $env:SUBMISSION_ROOT = (Get-Location).Path
 
 ---
 
-## 6) What’s new in this version
-
-* **Posterior mean (HDI) figure** now annotates each row with `mean [lo, hi]`.&#x20;
-* **P(Coef>0)** bar chart prints the probability value on each bar, with four evidence bands and guide lines at 0.05 / 0.50 / 0.95.&#x20;
-* **Similarity heatmap** switches to a **lower‑triangle** view with **two‑decimal in‑cell numbers**, and exposes sizing via `HEATMAP_CELL_INCH` and `HEATMAP_TICK_FONTSIZE`.&#x20;
-* **Maps**: hub tiers as discrete classes (including tier 0), links drawn uniformly in **orange‑red**, and a high‑contrast top‑driver legend without grey.&#x20;
-
----
-
-## 7) Outputs & interpretation at a glance
+## 6) Outputs & interpretation at a glance
 
 * **`visualizations/regions/`**: Domain‑specific trends per country (2001–2040), with history‑only baseline overlay and the 2021 anchor.
 * **`visualizations/panels/`**: Grids of all countries per domain.
@@ -196,46 +185,6 @@ $env:SUBMISSION_ROOT = (Get-Location).Path
   * `links_map.png`, `links_legend.png`: high‑agreement links (cos ≥ threshold) in **orange‑red**; node tiers 1–4.&#x20;
   * `top_driver_map.png`, `top_driver_legend.png`: top‑driver per country using a bright, non‑grey palette.&#x20;
 
----
 
-## 8) Troubleshooting
-
-* **Missing basemap**: `make_maps_all_in_one.py` prefers `geodatasets`; if absent, it tries to auto‑download Natural Earth 110m. Install `geodatasets` or ensure internet access on first run.&#x20;
-* **ISO labels look off**: check `data/ISO/region_abbreviations.xlsx` (column names are flexible); the scripts also fall back to the first three letters if no match is found.&#x20;
-* **Heatmap labels too cramped**: increase per‑cell size with `HEATMAP_CELL_INCH` (e.g., `0.65`) and/or reduce tick fonts via `HEATMAP_TICK_FONTSIZE`.&#x20;
-* **Bayesian outputs missing**: install `bambi` and `arviz`, or proceed with the frequentist tables only.
-
----
-
-## 9) Reproducibility notes
-
-* A single global exposure–outcome lag is fixed and documented (the minimal lag script writes a JSON record).
-* Standardization parameters (means/SDs) are estimated in‑window and reused for forecasting to avoid leakage.
-* All generated CSV/PNGs are placed under `results/` and `visualizations/` with stable filenames.
-
----
-
-### Quick run (copy–paste)
-
-**macOS/Linux**
-
-```bash
-export SUBMISSION_ROOT="$(pwd)"
-python 01_run_food2health_v2.py
-python 02_build_importance.py
-python 03_build_integrated_similarity.py
-python make_visuals_oneclick.py
-python make_maps_all_in_one.py --th-hub 0.70 --dpi 300
-```
-
-**Windows PowerShell**
-
-```powershell
-$env:SUBMISSION_ROOT = (Get-Location).Path
-python 01_run_food2health_v2.py
-python 02_build_importance.py
-python 03_build_integrated_similarity.py
-python make_visuals_oneclick.py
-python make_maps_all_in_one.py --th-hub 0.70 --dpi 300
 ```
 
